@@ -5,7 +5,8 @@ import fitz
 
 class Item(BaseModel):
     pdf_base64: str
-
+   
+    
 
 appp = FastAPI()
 
@@ -23,3 +24,17 @@ async def handle_post(data: Item):
    
    return {"message": f"PDF created{doc_info}"}    
 
+@appp.post("/post-box")
+async def post_box(data: Item):
+   pdf_64 = data.pdf_base64
+   pdf_bytes = b64decode(pdf_64, validate=True)
+   doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+   doc_info = {
+        "file_size": len(pdf_bytes), 
+        "page_count": doc.page_count,
+        # "pdf_base64": pdf_64,
+        "bounding_box": {"x":150, "y":150, "width":150, "height":150},
+        "pg_num": 1
+    }
+   
+   return {"message": "PDF created", "info": doc_info}
