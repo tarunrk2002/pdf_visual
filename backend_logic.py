@@ -30,6 +30,8 @@ async def post_box(data: Item):
    pdf_64 = data.pdf_base64
    pdf_bytes = b64decode(pdf_64, validate=True)
    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+   doc_height = doc[0].rect.height
+   doc_width = doc[0].rect.width
    random_x = random.randint(0, 100)
    random_y = random.randint(0, 100)
    doc_info = {
@@ -37,6 +39,8 @@ async def post_box(data: Item):
         "page_count": doc.page_count,
         # "pdf_base64": pdf_64,
         "bounding_box": {"x":random_x, "y":random_y, "width":200, "height":30},
+        "doc_height": doc_height,
+        "doc_width": doc_width,
         "pg_num": 1
     }
    
