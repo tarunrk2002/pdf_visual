@@ -39,6 +39,9 @@ async def post_box(data: Item):
        text_words = page.get_text("words")
        word_count += len(text_words)
 
+    #blocks
+       blocks = page.get_text("blocks")   
+
     #counting lines 
        text_lines = page.get_text("text")
        line_count += len(text_lines.split("\n"))
@@ -46,15 +49,14 @@ async def post_box(data: Item):
        lines = get_text_lines(page)
        lines_seperated = lines.split("\n\n")
 
-       for line in lines_seperated:
-           lines_seperated_list.append(line)
-           highlight = fitz.Rect(line)
-           page.draw_rect(highlight, color=(0, 1, 0), width=1) 
+    #loop for rectagles
 
-       words = page.get_text("words")  # list of words with their bounding boxes
-       for w in words:
-            word_rect = fitz.Rect(w[:4])  # The first four elements in the word are the coordinates
-            page.draw_rect(word_rect, color=(0, 1, 0), width=1)
+       for block in blocks:
+       
+           highlight = fitz.Rect(block[0], block[1], block[2], block[3])
+           page.draw_rect(highlight, color=(0, 1, 0), width=1)   
+
+       
 
            
 
@@ -66,19 +68,21 @@ async def post_box(data: Item):
 
 
    doc_info = {
-        "file_size": len(pdf_bytes), 
-        "page_count": doc.page_count,
-        # "pdf_base64": pdf_64,
-        "bounding_box": {"x":random_x, "y":random_y, "width":200, "height":30},
-        "doc_height": doc_height,
-        "doc_width": doc_width,
-        "pg_num": 1,
-        "line_count": line_count,
+        # "file_size": len(pdf_bytes), 
+        # "page_count": doc.page_count,
+        # # "pdf_base64": pdf_64,
+        # "bounding_box": {"x":random_x, "y":random_y, "width":200, "height":30},
+        # "doc_height": doc_height,
+        # "doc_width": doc_width,
+        # "pg_num": 1,
+        # "line_count": line_count,
         
-        "word_count": word_count,
-        "lines":lines,
-        "text_from_pdf":text_lines,
-        "lines_seperated_list":lines_seperated_list
+        # "word_count": word_count,
+        # "lines":lines,
+        # "text_from_pdf":text_lines,
+        # "lines_seperated_list":lines_seperated_list
+
+        "blocks":blocks
     }
    
    return {"info": doc_info}
