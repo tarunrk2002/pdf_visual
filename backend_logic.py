@@ -61,23 +61,23 @@ async def post_box(data: Item):
            
 
    doc.save("output_with_bounding_box.pdf")
-   doc.close()
+#    doc.close()
 
         
 
 
 
    doc_info = {
-        # "file_size": len(pdf_bytes), 
-        # "page_count": doc.page_count,
+        "file_size": len(pdf_bytes), 
+        "page_count": doc.page_count,
         # # "pdf_base64": pdf_64,
         # "bounding_box": {"x":random_x, "y":random_y, "width":200, "height":30},
         # "doc_height": doc_height,
         # "doc_width": doc_width,
         # "pg_num": 1,
-        # "line_count": line_count,
+        "line_count": line_count,
         
-        # "word_count": word_count,
+         "word_count": word_count,
         # "lines":lines,
         # "text_from_pdf":text_lines,
         # "lines_seperated_list":lines_seperated_list
@@ -86,4 +86,7 @@ async def post_box(data: Item):
     }
    
    return {"info": doc_info}
+   doc.close()
+
+
 
