@@ -30,10 +30,12 @@ async def post_box(data: Item):
    line_count = 0
    word_count = 0
    lines_seperated_list = []
+   block_list = []
 
 
    for i in range(doc.page_count):
        page = doc[i]
+       print(i)
 
     #counting words
        text_words = page.get_text("words")
@@ -54,7 +56,11 @@ async def post_box(data: Item):
        for block in blocks:
        
            highlight = fitz.Rect(block[0], block[1], block[2], block[3])
-           page.draw_rect(highlight, color=(0, 1, 0), width=1)   
+           page.draw_rect(highlight, color=(0, 1, 0), width=1)
+           block_list.append((f"page number: {i}"))
+           block_list.append(block)
+           
+
 
        
 
@@ -82,11 +88,11 @@ async def post_box(data: Item):
         # "text_from_pdf":text_lines,
         # "lines_seperated_list":lines_seperated_list
 
-        "blocks":blocks
+        "blocks":block_list
     }
    
    return {"info": doc_info}
-   doc.close()
+  
 
 
 
