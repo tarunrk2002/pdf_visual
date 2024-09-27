@@ -4,7 +4,7 @@ from base64 import b64decode
 import fitz
 import random
 from pymupdf4llm.helpers.get_text_lines import get_text_lines
-
+from fastapi.middleware.cors import CORSMiddleware
 class Item(BaseModel):
     pdf_base64: str
    
@@ -12,13 +12,30 @@ class Item(BaseModel):
 
 appp = FastAPI()
 
+#cors
 
+accepting_frontend_urls = [
+    "http://localhost:3000"
+]
+
+appp.add_middleware(
+    CORSMiddleware,
+    allow_origins=accepting_frontend_urls,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@appp.get("/")
+async def root():
+    return {"message": "Hello World"}
  
 
-@appp.post("/post-box")
+@appp.post("/post-data")
 async def post_box(data: Item):
    pdf_64 = data.pdf_base64
    pdf_bytes = b64decode(pdf_64, validate=True)
+   print("got the pdf")
    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
    doc_height = doc[0].rect.height
    doc_width = doc[0].rect.width
@@ -33,9 +50,10 @@ async def post_box(data: Item):
    block_list = []
 
 
+
    for i in range(doc.page_count):
        page = doc[i]
-       print(i)
+       
 
     #counting words
        text_words = page.get_text("words")
@@ -96,3 +114,9 @@ async def post_box(data: Item):
 
 
 
+if __name__ == "__main__":
+    import uvicorn as un
+    un.run(appp, host="0.0.0.0", port=8000)
+
+
+    #if you want to run from the terminal use this     uvicorn backend_logic:appp --reload
