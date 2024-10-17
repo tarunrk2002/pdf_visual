@@ -37,10 +37,7 @@ async def post_box(data: Item):
    pdf_bytes = b64decode(pdf_64, validate=True)
    print("got the pdf")
    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-   doc_height = doc[0].rect.height
-   doc_width = doc[0].rect.width
-   random_x = random.randint(0, 100)
-   random_y = random.randint(0, 100)
+  
 
    ## counting the total number of lines and words in the document
 
@@ -72,11 +69,10 @@ async def post_box(data: Item):
     #loop for rectagles
 
        for block in blocks:
-       
+           
            highlight = fitz.Rect(block[0], block[1], block[2], block[3])
            page.draw_rect(highlight, color=(0, 1, 0), width=1)
-           block_list.append((f"page number: {i}"))
-           block_list.append(block)
+           block_list.append({"pageIndex": i, "top": block[1], "left": block[0], "width": block[2] - block[0], "height": block[3] - block[1], "text": block[4]})
            
 
 
@@ -88,28 +84,15 @@ async def post_box(data: Item):
 #    doc.close()
 
         
-
+   
 
 
    doc_info = {
-        "file_size": len(pdf_bytes), 
-        "page_count": doc.page_count,
-        # # "pdf_base64": pdf_64,
-        # "bounding_box": {"x":random_x, "y":random_y, "width":200, "height":30},
-        # "doc_height": doc_height,
-        # "doc_width": doc_width,
-        # "pg_num": 1,
-        "line_count": line_count,
+       
         
-         "word_count": word_count,
-        # "lines":lines,
-        # "text_from_pdf":text_lines,
-        # "lines_seperated_list":lines_seperated_list
-
-        "blocks":block_list
     }
    
-   return {"info": doc_info}
+   return {"block": block_list}
   
 
 
